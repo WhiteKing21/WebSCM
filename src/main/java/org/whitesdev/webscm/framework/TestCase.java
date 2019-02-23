@@ -9,10 +9,13 @@ import org.openqa.selenium.WebDriver;
  * @
  */
 public abstract class TestCase{
+    
+    Boolean quitOnFinish=true;
+    
     public void performTest(Class<WebDriver> driverClass) throws Exception{
 	WebDriver driver=initialize(driverClass);
 	test(driver);
-	driver.quit();
+	if(quitOnFinish)driver.quit();
     }
 
     public WebDriver initialize(Class<WebDriver> driverClass) throws Exception{
