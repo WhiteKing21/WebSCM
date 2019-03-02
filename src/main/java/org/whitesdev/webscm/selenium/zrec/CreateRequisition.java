@@ -133,8 +133,8 @@ public class CreateRequisition extends TestCase {
 
 	util.frameReloading();
 	//"text-value"
-	String loadQuantity = util.textFromXpath("/html/body/div[2]/table[1]/tbody/tr/td[2]/table/tbody/tr[4]/td/span[2]", productDetailNestedFrames);
-	util.writeId("deliveryquantity[0]", loadQuantity);
+	Integer loadQuantity = Integer.parseInt(util.textFromXpath("/html/body/div[2]/table[1]/tbody/tr/td[2]/table/tbody/tr[4]/td/span[2]", productDetailNestedFrames));
+	util.writeId("deliveryquantity[0]", loadQuantity.toString());
 	util.clickXpath("/html/body/div[2]/table[2]/tbody/tr/td[2]/table/tbody/tr[16]/td/a");
     }
 

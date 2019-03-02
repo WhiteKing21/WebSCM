@@ -392,12 +392,33 @@ public class WebDriverUtils {
 	}
     }
 
-    
+    /**
+     * Clicks the element once it founds it by waiting for it to show up and obtaining it from the page with the provided xpath. 
+     * This is a bridge method to {@link #clickXpath(java.lang.String, java.util.Collection, java.lang.Integer) } it sets up the nestedFrameNamesStructure as null.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param xpath			the xpath to locate the element to write to.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
     public void clickXpath(String xpath, Integer secsToWait) {
 	clickName( xpath, null, secsToWait);
     }
     
-    public void clickXpath(String xpath,Collection<String> frameNamesStructure, Integer secsToWait) {
+    /**
+     * Clicks the element once it founds it by waiting for it to show up and obtaining it from the page with the provided xpath. 
+     * This is a bridge method to {@link #click(org.openqa.selenium.By, java.lang.Integer) } in a way setting up the {@link By#tagName(java.lang.String)} element.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param xpath			the xpath to locate the element to write to.
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
+    public void clickXpath(String xpath,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Start: Clicking.");
 	if (xpath == null) return;
 	try {
@@ -406,7 +427,7 @@ public class WebDriverUtils {
 
 	    getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Finish: Clicked.");
 	} catch (Exception ex) {
-	    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
 		    getLogger().warn("::clickXpath(xpath,frameNamesStructure,secsToWait) Couln't click the element, switching to the main frame and trying again. ");
 		    driver.switchTo().defaultContent();
@@ -420,7 +441,18 @@ public class WebDriverUtils {
     }
 
     
-    
+    /**
+     * clicks the element once it founds it by waiting for it to show up and obtaining it from the page with the provided {@link By locator}. 
+     * This method is used by several methods as the point where they all converge and in that sense the rest of the methods work as a bridge for this  
+     * (For example {@link #clickId(java.lang.String, java.util.Collection, java.lang.Integer)} method will call this method by doing <code>click(By.id(id),secs)</code> ). 
+     * But they add an extra layer of logic on top of the simple click method. 
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param locator	    the {@link By} object to locate the element to click.
+     * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *			    default-secs-to-wait-for-elements property) if null.
+     */
     public void click(By locator, Integer secsToWait) {
 	getLogger().trace("::clickId(name,secsToWait) - Start: Clicking.");
 	if (locator == null) return;
@@ -436,23 +468,48 @@ public class WebDriverUtils {
     
     
     
-    
+     /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided id. 
+     * This is a Bridge method of {@link #writeId(java.lang.String, java.lang.String, java.util.Collection, java.lang.Integer)} that sets up nestedFrameNamesStructure as null.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param id			the id to locate the element to write to.
+     * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
     public void writeId(String id, String keys, Integer secsToWait){
 	 writeId(id,keys,null,secsToWait);
     }
     
-    public void writeId(String id, String keys,Collection<String> frameNamesStructure, Integer secsToWait) {
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided id. 
+     * This is a bridge method to {@link #write(org.openqa.selenium.By, java.lang.String, java.lang.Integer) } in a way setting up the {@link By#tagName(java.lang.String)} element.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param id			the id to locate the element to write to.
+     * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
+    public void writeId(String id, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Start: writing.");
 	try {
 	    if (id == null) return;
 	    if (keys == null) keys = "";
 
-	    if(frameNamesStructure!=null) focus(frameNamesStructure,secsToWait);
+	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    write(By.id(id), keys, secsToWait);
 
 	    getLogger().trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Finish: Writed.");
 	} catch (Exception ex) {
-	    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
 		    getLogger().warn("::getElementByName(name,frameNamesStructure,secsToWait) Couln't write on the element by name, switching to the main frame and trying again. ");
 		    driver.switchTo().defaultContent();
@@ -465,19 +522,37 @@ public class WebDriverUtils {
 	}
     }
     
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided name. 
+     * This is a Bridge method of {@link #writeName(java.lang.String, java.lang.String, java.util.Collection, java.lang.Integer)} that sets up nestedFrameNamesStructure as null.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param name			the name to locate the element to write to.
+     * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
     public void writeName(String name, String keys, Integer secsToWait){
 	writeName(name, keys,null, secsToWait);
     }
     
     /**
-     * It does not use write method
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided name. 
+     * This particular method does not use {@link #write(org.openqa.selenium.By, java.lang.String, java.lang.Integer) } like its siblings.
      *
-     * @param name
-     * @param keys
-     * @param frameNamesStructure
-     * @param secsToWait
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param name			the name to locate the element to write to.
+     * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
      */
-    public void writeName(String name, String keys,Collection<String> frameNamesStructure, Integer secsToWait) {
+    public void writeName(String name, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::writeName(name,keys,frameNamesStructure,secsToWait) - Start: writing.");
 	if (name == null) return;
 
@@ -485,7 +560,7 @@ public class WebDriverUtils {
 	    WebElement input;
 	    try {
 
-		if(frameNamesStructure!=null) focus(frameNamesStructure,secsToWait);
+		if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 		input = getElementByName(name, secsToWait);
 
 	    } catch (Exception ex) {
@@ -499,7 +574,7 @@ public class WebDriverUtils {
 		    input = getElementByXPath("//input[contains(@name,'" + name + "')]", secsToWait);
 		} catch (Exception ex) {
 		    input = null;
-		    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+		    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 			getLogger().warn("::getElementByName(name,frameNamesStructure,secsToWait) Couln't find the element by XPath, switching to the main frame and trying again. ");
 			driver.switchTo().defaultContent();
 			defaultContentFocused=true;
@@ -518,6 +593,18 @@ public class WebDriverUtils {
 	}
     }
 
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided CSS class. 
+     * This is a bridge method to {@link #write(org.openqa.selenium.By, java.lang.String, java.lang.Integer) } in a way setting up the {@link By#tagName(java.lang.String)} element.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param css	    the CSS class to locate the element to write to.
+     * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *			    default-secs-to-wait-for-elements property) if null.
+     */
     public void writeCSS(String css, String keys, Integer secsToWait) {
 	getLogger().trace("::writeCSS(css,keys,secsToWait) - Start: writing.");
 	if (css == null) return;
@@ -530,10 +617,33 @@ public class WebDriverUtils {
 	}
     }
 
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the default tag <code>input</code>. 
+     * This is a Bridge method of {@link #writeTag(java.lang.String, java.lang.String, java.lang.Integer)} that sets up the tagName as "input".
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *					default-secs-to-wait-for-elements property) if null.
+     */
     public void writeTag(String keys, Integer secsToWait) {
 	writeTag("input", keys, secsToWait);
     }
 
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided tag. 
+     * This is a bridge method to {@link #write(org.openqa.selenium.By, java.lang.String, java.lang.Integer) } in a way setting up the {@link By#tagName(java.lang.String)} element.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param tagName	    the tag to locate the element to write to.
+     * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *			    default-secs-to-wait-for-elements property) if null.
+     */
     public void writeTag(String tagName, String keys, Integer secsToWait) {
 	getLogger().trace("::writeTag(css,keys,secsToWait) - Start: writing.");
 	if (tagName == null) return;
@@ -546,6 +656,18 @@ public class WebDriverUtils {
 	}
     }
 
+    /**
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided xpath. 
+     * This is a bridge method to {@link #write(org.openqa.selenium.By, java.lang.String, java.lang.Integer) } in a way setting up the {@link By#tagName(java.lang.String)} element.
+     *
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param xpath	    the xpath to locate the element to write to.
+     * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *			    default-secs-to-wait-for-elements property) if null.
+     */
     public void writeXPath(String xpath, String keys, Integer secsToWait) {
 	getLogger().trace("::writeXPath(css,keys,secsToWait) - Start: writing.");
 	if (xpath == null) return;
@@ -560,11 +682,19 @@ public class WebDriverUtils {
     }
 
     /**
-     * By name can be obtain by other ways, be aware.
+     * Writes (sends) the given keys ({@link String text}) to the element once it founds it by waiting for it to show up and obtaining it from the page 
+     * with the provided {@link By locator}. 
+     * This method is used by several methods as the point where they all converge and in that sense the rest of the methods work as a bridge for this  
+     * (For example {@link #writeId(java.lang.String, java.lang.String)} method will call this method by doing <code>write(By.id(id))</code> ). But some of 
+     * them add an extra layer of logic on top of the simple writing method. The method {@link #writeName(java.lang.String, java.lang.String) } 
+     * for example does not use this method.
      *
-     * @param locator
-     * @param keys
-     * @param secsToWait
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param locator	    the {@link By} object to locate the element to obtain the text from.
+     * @param keys	    The key or {@link String text} to send to the element (usually an input) on the page.
+     * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
+     *			    default-secs-to-wait-for-elements property) if null.
      */
     public void write(By locator, String keys, Integer secsToWait) {
 	getLogger().trace("::write(input,keys,secsToWait) - Start: Clicking.");
@@ -601,8 +731,8 @@ public class WebDriverUtils {
      * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
      * @since 2019-03-02
      * @param xpath	    the xpath to locate the element to obtain the text from.
-     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning for the 
-     *					outer frame and ending with the frame where the element is contained. Does no switching of focus if null.
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
      *			    default-secs-to-wait-for-elements property) if null.
      * @return		    The text of the found element with the {@link By locator}
@@ -1010,8 +1140,8 @@ public class WebDriverUtils {
      * Receives an ordered collection of frame/iframe names that represent the nested frame structure of the page until the point where is possible to obtain a desired object.
      * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
      * @since 2019-03-02
-     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning for the 
-     *					outer frame and ending with the frame where a desired focus is need it. Does nothing if null
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait    the seconds to wait for the frame to show up in the page, uses the app default (specified in .properties with 
      *			    default-secs-to-wait-for-elements property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
      */
