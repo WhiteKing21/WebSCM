@@ -1,5 +1,5 @@
 
-package org.whitesdev.webscm.framework;
+package org.whitesdev.webscm.selenium.framework;
 
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.WebDriver;
@@ -10,12 +10,13 @@ import org.openqa.selenium.WebDriver;
  */
 public abstract class TestCase{
     
-    Boolean quitOnFinish=true;
+    public Boolean quitOnFinish=true;
     
     public void performTest(Class<WebDriver> driverClass) throws Exception{
 	WebDriver driver=initialize(driverClass);
 	test(driver);
 	if(quitOnFinish)driver.quit();
+	quitOnFinish=true;
     }
 
     public WebDriver initialize(Class<WebDriver> driverClass) throws Exception{
