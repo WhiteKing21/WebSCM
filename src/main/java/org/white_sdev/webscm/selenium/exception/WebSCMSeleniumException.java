@@ -161,7 +161,7 @@
  * Creative Commons may be contacted at creativecommons.org.
 */
  
-package org.whitesdev.webscm.selenium.exception;
+package org.white_sdev.webscm.selenium.exception;
 
 
 

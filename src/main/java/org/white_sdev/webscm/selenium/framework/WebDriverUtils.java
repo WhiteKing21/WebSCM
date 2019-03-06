@@ -160,22 +160,31 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.whitesdev.webscm.selenium.framework;
+package org.white_sdev.webscm.selenium.framework;
 
+import java.io.File;
 import java.util.Collection;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.white_sdev.propertiesmanager.model.service.PropertiesManager;
 import static org.white_sdev.propertiesmanager.model.service.PropertyProvider.getProperty;
-import org.whitesdev.webscm.selenium.exception.WebSCMSeleniumException;
+import org.white_sdev.webscm.selenium.exception.WebSCMSeleniumException;
+import static org.white_sdev.webscm.selenium.logger.WLogger.warn;
 
 /**
  * Selenium WebDriver Utilities.
@@ -201,9 +210,43 @@ public class WebDriverUtils {
      */
     public final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    /**
+     * This is used by the method {@link #normalize(java.lang.String) } to improve the performance of the normalization process.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-06
+     */
+    public static String tabber=null;
+    
     public Boolean defaultContentFocused=true;
     
+    public static Integer screenShootCounter=1;
+    
     //<editor-fold defaultstate="collapsed" desc="Methods">
+    
+    /**
+     * A simple implementation to visualize more organized method signatures in the {@link org.slf4j.Logger logs}.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-06
+     * @param methodSignature	This is the method signature to normalize with the number of tabs configured in the properties
+     * @return			The signature normalized with the same number of characters (filled with tabs) than the rest of the normalized methods.
+     */
+    public String normalize(String methodSignature){
+	try{
+	    if(tabber==null){
+		String numberOfTabsConfigured=getProperty("normalized-logger-tabs");
+		Integer spaces=8*(numberOfTabsConfigured!=null?Integer.parseInt(numberOfTabsConfigured):7);
+		Integer tabs=(spaces-(getClass().getSimpleName().length()+" - ".length()+methodSignature.length()))/8;
+		tabber=methodSignature;
+		for(int i=0;i<tabs;i++){
+		    tabber+="\t";
+		}
+	    }
+	    return tabber; 
+	}catch(Exception ex){
+	    throw new WebSCMSeleniumException("An error has ocurred while configuring the class logger. Impossible to configure the number of tabs required to log.",ex);
+	}
+    }
+    
     /**
      * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
      * @since 2019-02-24
@@ -231,24 +274,24 @@ public class WebDriverUtils {
 	clickId(id, null,null);
     }
     
-    public void clickId(String id, Collection<String> frameNamesStructure) {
-	clickId( id, frameNamesStructure, null);
+    public void clickId(String id, Collection<String> nestedFrameNamesStructure) {
+	clickId( id, nestedFrameNamesStructure, null);
     }
     
     public void clickName(String name) {
 	clickName(name, null, null);
     }
 
-    public void clickName(String name, Collection<String> frameNamesStructure) {
-	clickName( name, frameNamesStructure, null);
+    public void clickName(String name, Collection<String> nestedFrameNamesStructure) {
+	clickName( name, nestedFrameNamesStructure, null);
     }
     
     public void clickClass(String css) {
 	clickClass(css, null, null);
     }
 
-    public void clickClass(String css, Collection<String> frameNamesStructure) {
-	clickClass( css, frameNamesStructure, null);
+    public void clickClass(String css, Collection<String> nestedFrameNamesStructure) {
+	clickClass( css, nestedFrameNamesStructure, null);
     }
     
     
@@ -256,8 +299,8 @@ public class WebDriverUtils {
 	clickXpath(xpath, null, null);
     }
 
-    public void clickXpath(String xpath, Collection<String> frameNamesStructure) {
-	clickXpath( xpath, frameNamesStructure, null);
+    public void clickXpath(String xpath, Collection<String> nestedFrameNamesStructure) {
+	clickXpath( xpath, nestedFrameNamesStructure, null);
     }
     
     
@@ -267,18 +310,18 @@ public class WebDriverUtils {
 	writeId(id, keys, null, null);
     }
 
-    public void writeId(String id, String keys, Collection<String> frameNamesStructure){
-	 writeId(id,keys,frameNamesStructure,null);
+    public void writeId(String id, String keys, Collection<String> nestedFrameNamesStructure){
+	 writeId(id,keys,nestedFrameNamesStructure,null);
     }
     
     /**
      * No framesets!
      * @param name
      * @param keys
-     * @param frameNamesStructure 
+     * @param nestedFrameNamesStructure 
      */
-    public void writeName(String name, String keys,Collection<String> frameNamesStructure){
-	writeName(name,keys,frameNamesStructure,null);
+    public void writeName(String name, String keys,Collection<String> nestedFrameNamesStructure){
+	writeName(name,keys,nestedFrameNamesStructure,null);
     }
     
     public void writeName(String name, String keys) {
@@ -305,8 +348,8 @@ public class WebDriverUtils {
 	return textFromXpath(xpath, null, null);
     }
     
-    public String textFromXpath(String xpath, Collection<String> frameNamesStructure) {
-	return textFromXpath( xpath, frameNamesStructure, null);
+    public String textFromXpath(String xpath, Collection<String> nestedFrameNamesStructure) {
+	return textFromXpath( xpath, nestedFrameNamesStructure, null);
     }
     
 //</editor-fold>
@@ -316,19 +359,19 @@ public class WebDriverUtils {
 	clickId( id, null, secsToWait);
     }
     
-    public void clickId(String id,Collection<String> frameNamesStructure, Integer secsToWait) {
+    public void clickId(String id,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::clickId(id,frameNamesStructure,secsToWait) - Start: Clicking.");
 	if (id == null) return;
 	try {
 
-	    if(frameNamesStructure!=null) focus(frameNamesStructure,secsToWait);
+	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.id(id), secsToWait);
 
 	    getLogger().trace("::clickId(id,frameNamesStructure,secsToWait) - Finish: Clicked.");
 	} catch (Exception ex) {
-	    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::clickId(id,frameNamesStructure,secsToWait) Couln't click the element, switching to the main frame and trying again. ");
+		    warn("clickId(id,frameNamesStructure,secsToWait)","Couln't click the element, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    clickId(id,secsToWait);
@@ -343,18 +386,18 @@ public class WebDriverUtils {
 	clickName( name, null, secsToWait);
     }
     
-    public void clickName(String name,Collection<String> frameNamesStructure, Integer secsToWait) {
+    public void clickName(String name,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::clickName(name,frameNamesStructure,secsToWait) - Start: Clicking.");
 	if (name == null) return;
 	try {
-
+	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.name(name), secsToWait);
 
 	    getLogger().trace("::clickName(name,frameNamesStructure,secsToWait) - Finish: Clicked.");
 	} catch (Exception ex) {
-	    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::clickName(name,frameNamesStructure,secsToWait) Couln't click the element, switching to the main frame and trying again. ");
+		    warn("clickName(name,frameNamesStructure,secsToWait)"," Couln't click the element, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    clickName(name,secsToWait);
@@ -369,19 +412,19 @@ public class WebDriverUtils {
 	clickName( css, null, secsToWait);
     }
     
-    public void clickClass(String css,Collection<String> frameNamesStructure, Integer secsToWait) {
+    public void clickClass(String css,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::clickClass(css,frameNamesStructure,secsToWait) - Start: Clicking.");
 	if (css == null) return;
 	try {
 	    
-	    if(frameNamesStructure!=null) focus(frameNamesStructure,secsToWait);
+	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.className(css), secsToWait);
 
 	    getLogger().trace("::clickClass(css,frameNamesStructure,secsToWait) - Finish: Clicked.");
 	} catch (Exception ex) {
-	    if(!defaultContentFocused && (frameNamesStructure==null || frameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
+	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::clickClass(css,frameNamesStructure,secsToWait) Couln't click the element, switching to the main frame and trying again. ");
+		    warn("clickClass(css,frameNamesStructure,secsToWait)"," Couln't click the element, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    clickClass(css,secsToWait);
@@ -400,10 +443,10 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param xpath			the xpath to locate the element to write to.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void clickXpath(String xpath, Integer secsToWait) {
-	clickName( xpath, null, secsToWait);
+	clickXpath( xpath, null, secsToWait);
     }
     
     /**
@@ -416,20 +459,21 @@ public class WebDriverUtils {
      * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
      *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void clickXpath(String xpath,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Start: Clicking.");
 	if (xpath == null) return;
 	try {
 
+	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.xpath(xpath), secsToWait);
 
 	    getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Finish: Clicked.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::clickXpath(xpath,frameNamesStructure,secsToWait) Couln't click the element, switching to the main frame and trying again. ");
+		    warn("clickClass(css,frameNamesStructure,secsToWait)","Couln't click the element, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    clickXpath(xpath,secsToWait);
@@ -451,15 +495,28 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param locator	    the {@link By} object to locate the element to click.
      * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      */
     public void click(By locator, Integer secsToWait) {
 	getLogger().trace("::clickId(name,secsToWait) - Start: Clicking.");
 	if (locator == null) return;
 	try {
+	    Integer previousTabsCount = driver.getWindowHandles().size();
 	    WebElement buttonOrLink = getElementBy(locator, secsToWait);
 	    buttonOrLink.click();
+	    
+	    if( previousTabsCount<driver.getWindowHandles().size()){
+		warn("clickId(name,secsToWait)","A known bug has ocurred (when a button is clicked an unwanted tab is oppened) proceding to fix it (close the tab).");
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "W");
+		//new Actions(driver).keyDown(Keys.TAB).sendKeys("w").perform();
+		// if there is just 1 tab:
+//		driver.switchTo().window(handles[1]);
+//		driver.close();
+//		driver.switchTo().window(handles[0]);
+	    }
+	    
 	    getLogger().trace("::clickId(name,secsToWait) - Finish: Clicked.");
+	    
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to click the Button or Link with locator:" + locator, ex);
 	}
@@ -478,7 +535,7 @@ public class WebDriverUtils {
      * @param id			the id to locate the element to write to.
      * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void writeId(String id, String keys, Integer secsToWait){
 	 writeId(id,keys,null,secsToWait);
@@ -496,7 +553,7 @@ public class WebDriverUtils {
      * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
      *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void writeId(String id, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Start: writing.");
@@ -511,7 +568,7 @@ public class WebDriverUtils {
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::getElementByName(name,frameNamesStructure,secsToWait) Couln't write on the element by name, switching to the main frame and trying again. ");
+		    warn("getElementByName(name,frameNamesStructure,secsToWait)","Couln't write on the element by name, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    writeId(id,keys,secsToWait);
@@ -532,7 +589,7 @@ public class WebDriverUtils {
      * @param name			the name to locate the element to write to.
      * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void writeName(String name, String keys, Integer secsToWait){
 	writeName(name, keys,null, secsToWait);
@@ -550,7 +607,7 @@ public class WebDriverUtils {
      * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
      *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void writeName(String name, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
 	getLogger().trace("::writeName(name,keys,frameNamesStructure,secsToWait) - Start: writing.");
@@ -569,13 +626,13 @@ public class WebDriverUtils {
 
 	    if (input == null) {
 		try {
-		    getLogger().warn("::getElementByName(name,frameNamesStructure,secsToWait) Couln't find the element by name looking for it wih XPath. Name: "+ name);
+		    warn("getElementByName(name,frameNamesStructure,secsToWait)","Couln't find the element by name looking for it wih XPath. Name: "+ name);
 		    //driver.switchTo().frame("main"); //this should be done by the method getElementBy(locator,secsToWait)
-		    input = getElementByXPath("//input[contains(@name,'" + name + "')]", secsToWait);
+		    input = getElementByXPath("//input[@name='" + name + "']", secsToWait);
 		} catch (Exception ex) {
 		    input = null;
 		    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
-			getLogger().warn("::getElementByName(name,frameNamesStructure,secsToWait) Couln't find the element by XPath, switching to the main frame and trying again. ");
+			warn("getElementByName(name,frameNamesStructure,secsToWait)","Couln't find the element by XPath, switching to the main frame and trying again.");
 			driver.switchTo().defaultContent();
 			defaultContentFocused=true;
 			writeName(name,keys,secsToWait);
@@ -603,7 +660,7 @@ public class WebDriverUtils {
      * @param css	    the CSS class to locate the element to write to.
      * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      */
     public void writeCSS(String css, String keys, Integer secsToWait) {
 	getLogger().trace("::writeCSS(css,keys,secsToWait) - Start: writing.");
@@ -626,7 +683,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param keys			The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait		the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *					default-secs-to-wait-for-elements property) if null.
+     *					default-explicit-wait property) if null.
      */
     public void writeTag(String keys, Integer secsToWait) {
 	writeTag("input", keys, secsToWait);
@@ -642,7 +699,7 @@ public class WebDriverUtils {
      * @param tagName	    the tag to locate the element to write to.
      * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      */
     public void writeTag(String tagName, String keys, Integer secsToWait) {
 	getLogger().trace("::writeTag(css,keys,secsToWait) - Start: writing.");
@@ -666,7 +723,7 @@ public class WebDriverUtils {
      * @param xpath	    the xpath to locate the element to write to.
      * @param keys	    The keys or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      */
     public void writeXPath(String xpath, String keys, Integer secsToWait) {
 	getLogger().trace("::writeXPath(css,keys,secsToWait) - Start: writing.");
@@ -694,7 +751,7 @@ public class WebDriverUtils {
      * @param locator	    the {@link By} object to locate the element to obtain the text from.
      * @param keys	    The key or {@link String text} to send to the element (usually an input) on the page.
      * @param secsToWait    the seconds to wait for the element to show up in the page; uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      */
     public void write(By locator, String keys, Integer secsToWait) {
 	getLogger().trace("::write(input,keys,secsToWait) - Start: Clicking.");
@@ -719,7 +776,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param xpath	    the xpath to locate the element to obtain the text from.
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The text of the found element with the {@link By locator}
      */
     public String textFromXpath(String xpath, Integer secsToWait) {
@@ -734,7 +791,7 @@ public class WebDriverUtils {
      * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
      *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The text of the found element with the {@link By locator}
      */
     public String textFromXpath(String xpath,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
@@ -750,7 +807,7 @@ public class WebDriverUtils {
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
-		    getLogger().warn("::textFromXpath(xpath,frameNamesStructure,secsToWait) Couln't get text from the element, switching to the main frame and trying again. ");
+		    warn("textFromXpath(xpath,frameNamesStructure,secsToWait)","Couln't get text from the element, switching to the main frame and trying again.");
 		    driver.switchTo().defaultContent();
 		    defaultContentFocused=true;
 		    String text=textFromXpath(xpath,secsToWait);
@@ -767,7 +824,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param locator	    the {@link By} object to locate the element to obtain the text from.
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The text of the found element with the {@link By locator}
      */
     public String text(By locator, Integer secsToWait) {
@@ -809,7 +866,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param name	    the name to locate the element to obtain
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The found element with the name
      */
     public WebElement getElementByName(String name, Integer secsToWait) {
@@ -836,7 +893,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param tagName	    the tag to locate the element to obtain
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The found element with the tag
      */
     public WebElement getElementByTag(String tagName, Integer secsToWait) {
@@ -861,7 +918,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param css	    the css class name to locate the element to obtain
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The found element with the css class name
      */
     public WebElement getElementByCSS(String css, Integer secsToWait) {
@@ -883,7 +940,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param xpath	    the xpath to locate the element to obtain
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The found element with the xpath
      */
     public WebElement getElementByXPath(String xpath, Integer secsToWait) {
@@ -905,7 +962,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param locator	    the {@link By} object to locate the element to obtain
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The found element with the {@link By locator}
      */
     public WebElement getElementBy(By locator, Integer secsToWait) {
@@ -948,7 +1005,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param id	    The id to look for the element with it.
      * @param secs    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitForId(String id, Integer secs) {
@@ -974,7 +1031,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param name	    The name to look for the element with it.
      * @param secs    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitForName(String name, Integer secs) {
@@ -1000,7 +1057,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param css	    The CSS class name to look for the element with it.
      * @param secsToWait    the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		    The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitForCSS(String css, Integer secsToWait) {
@@ -1025,7 +1082,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param tagName	The tag to look for the element with it.
      * @param secs	the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitForTag(String tagName, Integer secs) {
@@ -1050,7 +1107,7 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param xpath	The xpath to look for the element with it.
      * @param secsToWait	the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitForXPath(String xpath, Integer secsToWait) {
@@ -1076,15 +1133,16 @@ public class WebDriverUtils {
      * @since 2019-03-02
      * @param locator	the {@link By} object to locate the element to obtain
      * @param secs	the seconds to wait for the element to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null.
+     *			    default-explicit-wait property) if null.
      * @return		The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitFor(By locator, Integer secs) {
 	getLogger().trace("::waitFor(locator,secs) - Start: preparing wait.");
 	
 	if (secs == null) {
-	    Integer newSecs=Integer.parseInt(getProperty("default-secs-to-wait-for-elements"));
-	    secs = newSecs==null?newSecs:0;
+	    String propertiesSecs=getProperty("default-explicit-wait");
+	    Integer newSecs=propertiesSecs!=null?Integer.parseInt(propertiesSecs):null;
+	    secs = newSecs!=null?newSecs:0;
 	}
 	if (locator == null) return null;
 	WebElement element;
@@ -1101,7 +1159,7 @@ public class WebDriverUtils {
 
 
 	} catch(TimeoutException ex){
-	    getLogger().warn("::waitFor(locator,secs) - The element ["+locator+"] Never showed up. Trying without waiting.");
+	    warn("waitFor(locator,secs)","The element ["+locator+"] Never showed up. Trying without waiting.");
 	    try{
 		element= driver.findElement(locator);
 		return element;
@@ -1131,9 +1189,24 @@ public class WebDriverUtils {
 	    driver.switchTo().defaultContent();
 	    defaultContentFocused=true;
 	    getLogger().trace("::frameReloading() - Finish: Focus Reseted.");
+	}catch(org.openqa.selenium.UnhandledAlertException ex){
+	    throw new WebSCMSeleniumException("Unable to focus on the default Content(reseting the focus) of the page due to an alert,"
+		    + " please handle the alert before changing focus.", ex);
 	}catch(Exception ex){
-	    throw new WebSCMSeleniumException("Unable to focus on the default Content(reseting the focus) of the page", ex);
+	    throw new WebSCMSeleniumException("Unable to focus on the default Content(reseting the focus) of the page.", ex);
 	}
+    }
+    
+    /**
+     * Receives an ordered collection of frame/iframe names that represent the nested frame structure of the page until the point where is possible to obtain a desired object.
+     * This is a bridge method to {@link #focus(java.util.Collection, java.lang.Integer) } setting up the <code>secsToWait</code> to null, this makes the defaults to be used.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2019-03-02
+     * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
+     *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
+     */
+    public void focus(Collection<String> nestedFrameNamesStructure){
+	focus(nestedFrameNamesStructure,null);
     }
     
     /**
@@ -1143,7 +1216,7 @@ public class WebDriverUtils {
      * @param nestedFrameNamesStructure Ordered frame name {@link Collection} that represents the frame structure of the page, beginning from the 
      *					outer frame and ending with the frame where the element is contained. Does no switch of focus if null.
      * @param secsToWait    the seconds to wait for the frame to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
+     *			    default-explicit-wait property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
      */
     public void focus(Collection<String> nestedFrameNamesStructure, Integer secsToWait){
 	getLogger().trace("::focus(frameNamesStructure,secsToWait) - Start: looking for focus.");
@@ -1156,40 +1229,48 @@ public class WebDriverUtils {
 		return;
 	    }
 	    if (secsToWait == null) {
-		Integer newSecs=Integer.parseInt(getProperty("default-secs-to-wait-for-elements"));
-		secsToWait = newSecs==null?newSecs:0;
+		String propertiesSecs=getProperty("default-explicit-wait");
+		Integer newSecs=propertiesSecs!=null?Integer.parseInt(propertiesSecs):null;
+		secsToWait = (newSecs!=null)?newSecs:0;
 	    }
 	    
 	    //process
 	    defaultContentFocused=false;//dirty
 	    Boolean firstFrame=true;
+	    String lastFrameFocusedName="Unkown";
 	    for(String frameName:nestedFrameNamesStructure){
 		try{
 		    try{
 			focusFrame(How.ID,frameName,secsToWait);
+			lastFrameFocusedName=frameName;
 		    }catch(Exception ex){
-			getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{1}] was not found by Id trying with Name.",frameName);
+			getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{}] was not found by Id trying with Name.",frameName);
 			focusFrame(How.NAME,frameName,secsToWait);
+			lastFrameFocusedName=frameName;
 		    }
 		}catch(Exception ex){
 		    if(firstFrame){ //tries switching back to the main frame and try again.
 			try{
 			    driver.switchTo().defaultContent();
+			    lastFrameFocusedName="default";
 			    try{
 				focusFrame(How.ID,frameName,secsToWait);
+				lastFrameFocusedName=frameName;
 			    }catch(Exception ex2){
-				getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{1}] was not found by Id trying with Name.",frameName);
+				getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{}] was not found by Id trying with Name.",frameName);
 				focusFrame(How.NAME,frameName,secsToWait);
+				lastFrameFocusedName=frameName;
 			    }
 			    if(firstFrame)firstFrame=false;
 			    continue; //do not log the warn
 			}catch(Exception ex3){}//logs the next warn
 		    }
-		    getLogger().warn("::focus(frameNamesStructure,secsToWait): Impossible to switch "
+		    warn("focus(frameNamesStructure,secsToWait)","Impossible to switch "
 			    + "focus to frame ["+frameName+"] igniring it, and keep trying with the rest of the structure.");
 		}
 		if(firstFrame)firstFrame=false;
 	    }
+	    getLogger().debug("::focus(frameNamesStructure,secsToWait): FOCUS switched to :"+lastFrameFocusedName);
 	}catch(Exception ex){
 	    throw new WebSCMSeleniumException("Unable to focus one of the frames of the given structure", ex);
 	}
@@ -1208,7 +1289,7 @@ public class WebDriverUtils {
      * @param how	    {@link How} must be specified as ID or NAME; this is supposed to be specified although it will go ahead and try with ID if not (logs a warn).
      * @param frameNameOrId The Name or Id of the frame/iframe; does nothing if null.
      * @param secsToWait    the seconds to wait for the frame to show up in the page, uses the app default (specified in .properties with 
-     *			    default-secs-to-wait-for-elements property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
+     *			    default-explicit-wait property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
      */
     public void focusFrame(How how,String frameNameOrId,Integer secsToWait){
 	getLogger().trace("::focusFrame(how,frameNameOrId,secsToWait) - Start: changing focus to new frame.");
@@ -1220,11 +1301,12 @@ public class WebDriverUtils {
 		return;
 	    }
 	    if (secsToWait == null) {
-		Integer newSecs=Integer.parseInt(getProperty("default-secs-to-wait-for-elements"));
-		secsToWait = newSecs==null?newSecs:0;
+		String propertiesSecs=getProperty("default-explicit-wait");
+		Integer newSecs=propertiesSecs!=null?Integer.parseInt(propertiesSecs):null;
+		secsToWait = (newSecs!=null)?newSecs:0;
 	    }
 	    if(how==null || (how!=How.ID && how!=How.NAME)){
-		getLogger().warn("::focusFrame(how,frameNameOrId,secsToWait): The how parameter was not provided, it must be NAME or ID. Trying with ID by default.");
+		warn("focusFrame(how,frameNameOrId,secsToWait)","The how parameter was not provided, it must be NAME or ID. Trying with ID by default.");
 		how=How.ID;
 	    }
 	    
@@ -1234,14 +1316,17 @@ public class WebDriverUtils {
 	    try{
 		var wait = (new WebDriverWait(driver, secsToWait));
 		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrId));
+		getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
 	    }catch(Exception ex){
-		getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): Error while waiting for the frame: {1}. Error: {2}",frameNameOrId,ex);
-		getLogger().warn("::focusFrame(how,frameNameOrId,secsToWait): Impossible to obtain the frame by waiting on it, "
+		getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): Error while waiting for the frame: {}. Error: {}",frameNameOrId,ex.getStackTrace()[0]);
+		warn("focusFrame(how,frameNameOrId,secsToWait)","Impossible to obtain the frame ["+frameNameOrId+"] by waiting on it, "
 			+ "trying without wait for the element to be pressent, for more information on the warn check the debug logs.");
 		try{
 		    driver.switchTo().frame(driver.findElement(By.xpath("//frame[@"+attribute+"='"+frameNameOrId+"']")));
+		    getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
 		}catch(Exception ex2){
 		    driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@"+attribute+"='"+frameNameOrId+"']")));  //u.u
+		    getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
 		}
 	    }
 	    
@@ -1270,7 +1355,56 @@ public class WebDriverUtils {
 	}
     }
     
+    public String takeScreenShot(){
+	return takeScreenShot((String)null);
+    }
+    
+    public String takeScreenShot(TestCase tc){
+	String screenShotFileName="["+driver.getClass().getSimpleName()+"] "+tc.getTestFullName()+".png";
+	return takeScreenShot(screenShotFileName);
+    }
+    
+    public String takeScreenShot(String screenShotFileName){
+	getLogger().trace("::takeScreenShoot() - Start: Taking a Screenshot.");
+	try{
+	    if(screenShotFileName==null) screenShotFileName=getDefaultScreenShotFileName();
+	    
+	    Thread.sleep(1000);
+	    File screenShotFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+	    File copy=new File(screenShotFileName);
+	    FileUtils.copyFile(screenShotFile,copy );
+	    getLogger().trace("::takeScreenShoot() - Finish: Screenshot saved.");
+	    return copy.getAbsolutePath();
+	    
+	}catch(java.io.IOException ex){
+	    throw new WebSCMSeleniumException("Unable to save the screenshot", ex);
+	}catch(Exception ex){
+	    throw new WebSCMSeleniumException("Unable to take a screenshot", ex);
+	}
+    }
+    
+    
+    public boolean isEdgeBeingTested() {
+	return driver instanceof EdgeDriver;
+    }
+    
+    public boolean isIEBeingTested() {
+	return driver instanceof InternetExplorerDriver;
+    }
+    
+    public boolean isChromeBeingTested() {
+	return driver instanceof ChromeDriver;
+    }
+    
+    public boolean isFireFoxBeingTested() {
+	return driver instanceof FirefoxDriver;
+    }
+
+     private String getDefaultScreenShotFileName() {
+	String fileName="screenshot"+WebDriverUtils.screenShootCounter+".png";
+	WebDriverUtils.screenShootCounter++;
+	return fileName;
+    }
 //</editor-fold>
 
-    
 }
