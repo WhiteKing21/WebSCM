@@ -184,6 +184,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.white_sdev.propertiesmanager.model.service.PropertyProvider.getProperty;
 import org.white_sdev.webscm.selenium.exception.WebSCMSeleniumException;
+import static org.white_sdev.webscm.selenium.logger.WLogger.debug;
+import static org.white_sdev.webscm.selenium.logger.WLogger.trace;
 import static org.white_sdev.webscm.selenium.logger.WLogger.warn;
 
 /**
@@ -360,14 +362,14 @@ public class WebDriverUtils {
     }
     
     public void clickId(String id,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::clickId(id,frameNamesStructure,secsToWait) - Start: Clicking.");
+	trace("clickId(id,frameNamesStructure,secsToWait) - Start","Clicking.");
 	if (id == null) return;
 	try {
 
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.id(id), secsToWait);
 
-	    getLogger().trace("::clickId(id,frameNamesStructure,secsToWait) - Finish: Clicked.");
+	    trace("clickId(id,frameNamesStructure,secsToWait) - Finish","Clicked.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
@@ -387,13 +389,13 @@ public class WebDriverUtils {
     }
     
     public void clickName(String name,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::clickName(name,frameNamesStructure,secsToWait) - Start: Clicking.");
+	trace("clickName(name,frameNamesStructure,secsToWait) - Start","Clicking.");
 	if (name == null) return;
 	try {
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.name(name), secsToWait);
 
-	    getLogger().trace("::clickName(name,frameNamesStructure,secsToWait) - Finish: Clicked.");
+	    trace("clickName(name,frameNamesStructure,secsToWait) - Finish","Clicked.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
@@ -413,14 +415,14 @@ public class WebDriverUtils {
     }
     
     public void clickClass(String css,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::clickClass(css,frameNamesStructure,secsToWait) - Start: Clicking.");
+	trace("clickClass(css,frameNamesStructure,secsToWait) - Start","Clicking.");
 	if (css == null) return;
 	try {
 	    
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.className(css), secsToWait);
 
-	    getLogger().trace("::clickClass(css,frameNamesStructure,secsToWait) - Finish: Clicked.");
+	    trace("::clickClass(css,frameNamesStructure,secsToWait) - Finish","Clicked.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
@@ -462,14 +464,14 @@ public class WebDriverUtils {
      *					default-explicit-wait property) if null.
      */
     public void clickXpath(String xpath,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Start: Clicking.");
+	trace("clickXpath(xpath,frameNamesStructure,secsToWait) - Start","Clicking.");
 	if (xpath == null) return;
 	try {
 
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    click(By.xpath(xpath), secsToWait);
 
-	    getLogger().trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Finish: Clicked.");
+	    trace("::clickXpath(xpath,frameNamesStructure,secsToWait) - Finish","Clicked.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
@@ -498,7 +500,7 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null.
      */
     public void click(By locator, Integer secsToWait) {
-	getLogger().trace("::clickId(name,secsToWait) - Start: Clicking.");
+	trace("clickId(name,secsToWait) - Start","Clicking.");
 	if (locator == null) return;
 	try {
 	    Integer previousTabsCount = driver.getWindowHandles().size();
@@ -515,7 +517,7 @@ public class WebDriverUtils {
 //		driver.switchTo().window(handles[0]);
 	    }
 	    
-	    getLogger().trace("::clickId(name,secsToWait) - Finish: Clicked.");
+	    trace("clickId(name,secsToWait) - Finish","Clicked.");
 	    
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to click the Button or Link with locator:" + locator, ex);
@@ -556,7 +558,7 @@ public class WebDriverUtils {
      *					default-explicit-wait property) if null.
      */
     public void writeId(String id, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Start: writing.");
+	trace("writeId(id,keys,frameNamesStructure,secsToWait) - Start","writing.");
 	try {
 	    if (id == null) return;
 	    if (keys == null) keys = "";
@@ -564,7 +566,7 @@ public class WebDriverUtils {
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    write(By.id(id), keys, secsToWait);
 
-	    getLogger().trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Finish: Writed.");
+	    trace("::writeId(id,keys,frameNamesStructure,secsToWait) - Finish","Writed.");
 	} catch (Exception ex) {
 	    if(!defaultContentFocused && (nestedFrameNamesStructure==null || nestedFrameNamesStructure.isEmpty())){ //is dirty and wasn't me who got it dirty?
 		try{
@@ -610,7 +612,7 @@ public class WebDriverUtils {
      *					default-explicit-wait property) if null.
      */
     public void writeName(String name, String keys,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::writeName(name,keys,frameNamesStructure,secsToWait) - Start: writing.");
+	trace("writeName(name,keys,frameNamesStructure,secsToWait) - Start","writing.");
 	if (name == null) return;
 
 	try{
@@ -643,7 +645,7 @@ public class WebDriverUtils {
 	    }
 	    
 	    input.sendKeys(keys);
-	    getLogger().trace("::writeName(name,keys,frameNamesStructure,secsToWait) - Finish: keys sent.");
+	    trace("writeName(name,keys,frameNamesStructure,secsToWait) - Finish","keys sent.");
 	    
 	}catch(Exception ex){
 	    throw new WebSCMSeleniumException("Unable to write in element (Input?) with Name: " + name, ex);
@@ -663,12 +665,12 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null.
      */
     public void writeCSS(String css, String keys, Integer secsToWait) {
-	getLogger().trace("::writeCSS(css,keys,secsToWait) - Start: writing.");
+	trace("writeCSS(css,keys,secsToWait) - Start","writing.");
 	if (css == null) return;
 	try {
 	    write(By.cssSelector(css), keys, secsToWait);
 
-	    getLogger().trace("::writeCSS(name,keys,secsToWait) - Finish: keys sent.");
+	    trace("::writeCSS(name,keys,secsToWait) - Finish","keys sent.");
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to write in element (Input?) with CSS: " + css, ex);
 	}
@@ -702,12 +704,12 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null.
      */
     public void writeTag(String tagName, String keys, Integer secsToWait) {
-	getLogger().trace("::writeTag(css,keys,secsToWait) - Start: writing.");
+	trace("::writeTag(css,keys,secsToWait) - Start","writing.");
 	if (tagName == null) return;
 	try {
 	    write(By.tagName(tagName), keys, secsToWait);
 
-	    getLogger().trace("::writeTag(name,keys,secsToWait) - Finish: keys sent.");
+	    trace("::writeTag(name,keys,secsToWait) - Finish","keys sent.");
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to write in element (Input?) with Tag: " + tagName, ex);
 	}
@@ -726,12 +728,12 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null.
      */
     public void writeXPath(String xpath, String keys, Integer secsToWait) {
-	getLogger().trace("::writeXPath(css,keys,secsToWait) - Start: writing.");
+	trace("::writeXPath(css,keys,secsToWait) - Start","writing.");
 	if (xpath == null) return;
 	try {
 	    write(By.xpath(xpath), keys, secsToWait);
 
-	    getLogger().trace("::writeXPath(name,keys,secsToWait) - Finish: keys sent.");
+	    trace("::writeXPath(name,keys,secsToWait) - Finish","keys sent.");
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to write in element (Input?) with Xpath: " + xpath, ex);
 	}
@@ -754,7 +756,7 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null.
      */
     public void write(By locator, String keys, Integer secsToWait) {
-	getLogger().trace("::write(input,keys,secsToWait) - Start: Clicking.");
+	trace("::write(input,keys,secsToWait) - Start","Clicking.");
 	try {
 	    if (locator == null) return;
 	    if (keys == null) keys = "";
@@ -762,7 +764,7 @@ public class WebDriverUtils {
 	    WebElement input = getElementBy(locator, secsToWait);
 	    input.sendKeys(keys);
 
-	    getLogger().trace("::write(id,keys,secsToWait) - Finish: Writed.");
+	    trace("::write(id,keys,secsToWait) - Finish","Writed.");
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to write in element (Input?) with locator: " + locator, ex);
 	}
@@ -795,13 +797,13 @@ public class WebDriverUtils {
      * @return		    The text of the found element with the {@link By locator}
      */
     public String textFromXpath(String xpath,Collection<String> nestedFrameNamesStructure, Integer secsToWait) {
-	getLogger().trace("::textFromXpath(xpath,frameNamesStructure,secsToWait) - Start: Getting text from element.");
+	trace("::textFromXpath(xpath,frameNamesStructure,secsToWait) - Start","Getting text from element.");
 	if (xpath == null) throw new IllegalArgumentException("The provided Xpath can't be null");
 	try {
 	    
 	    if(nestedFrameNamesStructure!=null) focus(nestedFrameNamesStructure,secsToWait);
 	    String text=text(By.xpath(xpath), secsToWait);
-	    getLogger().trace("::textFromXpath(xpath,frameNamesStructure,secsToWait) - Finish: Text Obtained.");
+	    trace("::textFromXpath(xpath,frameNamesStructure,secsToWait) - Finish","Text Obtained.");
 	    return text;
 	    
 	} catch (Exception ex) {
@@ -828,13 +830,13 @@ public class WebDriverUtils {
      * @return		    The text of the found element with the {@link By locator}
      */
     public String text(By locator, Integer secsToWait) {
-	getLogger().trace("::text(locator,secsToWait) - Start: Getting text from element.");
+	trace("::text(locator,secsToWait) - Start","Getting text from element.");
 	try {
 	    if (locator == null) return null;
 
 	    WebElement label = getElementBy(locator, secsToWait);
 	    String text=label.getText();
-	    getLogger().trace("::text(locator,secsToWait) - Finish: Text Obtained.");
+	    trace("::text(locator,secsToWait) - Finish","Text Obtained.");
 	    return text;
 
 	} catch (Exception ex) {
@@ -870,7 +872,7 @@ public class WebDriverUtils {
      * @return		    The found element with the name
      */
     public WebElement getElementByName(String name, Integer secsToWait) {
-	getLogger().trace("::getElementByName(name,secsToWait) - Start: retrieving element.");
+	trace("::getElementByName(name,secsToWait) - Start","retrieving element.");
 	if (name == null) return null;
 	WebElement element;
 	try {
@@ -882,7 +884,7 @@ public class WebDriverUtils {
 	if (element == null) {
 	    throw new WebSCMSeleniumException("Unable to obtain element by name: " + name);
 	}
-	getLogger().trace("::getElementByName(name,secsToWait) - Finish: returning element.");
+	trace("::getElementByName(name,secsToWait) - Finish","returning element.");
 	return element;
     }
 
@@ -897,13 +899,13 @@ public class WebDriverUtils {
      * @return		    The found element with the tag
      */
     public WebElement getElementByTag(String tagName, Integer secsToWait) {
-	getLogger().trace("::getElementByTag(tagName) - Start: retrieving element.");
+	trace("::getElementByTag(tagName) - Start","retrieving element.");
 	if (tagName == null) return null;
 	try {
 
 	    WebElement webElement = getElementBy(By.tagName(tagName), secsToWait);
 
-	    getLogger().trace("::getElementByTag(tagName,secsToWait) - Finish: returning element.");
+	    trace("::getElementByTag(tagName,secsToWait) - Finish","returning element.");
 	    return webElement;
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Impossible to obtain the element with the Tag provided", ex);
@@ -922,14 +924,14 @@ public class WebDriverUtils {
      * @return		    The found element with the css class name
      */
     public WebElement getElementByCSS(String css, Integer secsToWait) {
-	getLogger().trace("::getElementByCSS(css,secsToWait) - Start: retrieving element.");
+	trace("::getElementByCSS(css,secsToWait) - Start","retrieving element.");
 	WebElement webElement = null;
 	try {
 	    webElement = getElementBy(By.cssSelector(css), secsToWait);
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Impossible to obtain the element with the CSS Selector provided", ex);
 	}
-	getLogger().trace("::getElementByCSS(css,secsToWait) - Finish: returning element.");
+	trace("::getElementByCSS(css,secsToWait) - Finish","returning element.");
 	return webElement;
     } // this method will not be used locally
 
@@ -944,14 +946,14 @@ public class WebDriverUtils {
      * @return		    The found element with the xpath
      */
     public WebElement getElementByXPath(String xpath, Integer secsToWait) {
-	getLogger().trace("::getElementByXPath(xpath,secsToWait) - Start: retrieving element.");
+	trace("::getElementByXPath(xpath,secsToWait) - Start","retrieving element.");
 	WebElement webElement = null;
 	try {
 	    webElement = getElementBy(By.xpath(xpath), secsToWait);
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Impossible to obtain the element with the XPath provided", ex);
 	}
-	getLogger().trace("::getElementByXPath(xpath,secsToWait) - Finish: returning element.");
+	trace("::getElementByXPath(xpath,secsToWait) - Finish","returning element.");
 	return webElement;
     } // this method will not be used locally
 
@@ -966,7 +968,7 @@ public class WebDriverUtils {
      * @return		    The found element with the {@link By locator}
      */
     public WebElement getElementBy(By locator, Integer secsToWait) {
-	getLogger().trace("::getElementBy(locator,secsToWait) - Start: Rerieving Element.");
+	trace("::getElementBy(locator,secsToWait) - Start","Rerieving Element.");
 	if (locator == null) return null;
 
 	WebElement element = null;
@@ -978,7 +980,7 @@ public class WebDriverUtils {
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Impossible to obtain the element with locator: " + locator, ex);
 	}
-	getLogger().trace("::getElementBy(locator,secsToWait) - Finish: Returning Element.");
+	trace("::getElementBy(locator,secsToWait) - Finish","Returning Element.");
 	return element;
 
     }
@@ -1137,7 +1139,7 @@ public class WebDriverUtils {
      * @return		The element as {@link WebElement} or null in case it is not found
      */
     public WebElement waitFor(By locator, Integer secs) {
-	getLogger().trace("::waitFor(locator,secs) - Start: preparing wait.");
+	trace("::waitFor(locator,secs) - Start","preparing wait.");
 	
 	if (secs == null) {
 	    String propertiesSecs=getProperty("default-explicit-wait");
@@ -1153,7 +1155,7 @@ public class WebDriverUtils {
 	    
 	    element= (new WebDriverWait(driver, secs)).until(ExpectedConditions.presenceOfElementLocated(locator));
 	    
-	    getLogger().trace("::waitFor(locator,secs) - Finish: waiting is over.");
+	    trace("::waitFor(locator,secs) - Finish","waiting is over.");
 	    return element;
 	    //isElementVisible with visibilityOfElementLocated OR visibilityOf
 
@@ -1184,11 +1186,11 @@ public class WebDriverUtils {
      * @since 2019-03-02
      */
     public void frameReloading(){
-	getLogger().trace("::frameReloading() - Start: Reseting focus.");
+	trace("::frameReloading() - Start","Reseting focus.");
 	try{
 	    driver.switchTo().defaultContent();
 	    defaultContentFocused=true;
-	    getLogger().trace("::frameReloading() - Finish: Focus Reseted.");
+	    trace("::frameReloading() - Finish","Focus Reseted.");
 	}catch(org.openqa.selenium.UnhandledAlertException ex){
 	    throw new WebSCMSeleniumException("Unable to focus on the default Content(reseting the focus) of the page due to an alert,"
 		    + " please handle the alert before changing focus.", ex);
@@ -1219,13 +1221,13 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
      */
     public void focus(Collection<String> nestedFrameNamesStructure, Integer secsToWait){
-	getLogger().trace("::focus(frameNamesStructure,secsToWait) - Start: looking for focus.");
+	trace("::focus(frameNamesStructure,secsToWait) - Start","looking for focus.");
 	
 	
 	try{
 	    //validations
 	    if (nestedFrameNamesStructure == null){
-		getLogger().trace("::focus(frameNamesStructure,secsToWait) - Finish: No frames provided, the focus was not modified.");
+		trace("::focus(frameNamesStructure,secsToWait) - Finish","No frames provided, the focus was not modified.");
 		return;
 	    }
 	    if (secsToWait == null) {
@@ -1244,7 +1246,7 @@ public class WebDriverUtils {
 			focusFrame(How.ID,frameName,secsToWait);
 			lastFrameFocusedName=frameName;
 		    }catch(Exception ex){
-			getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{}] was not found by Id trying with Name.",frameName);
+			debug("focus(frameNamesStructure,secsToWait)","The frame ["+frameName+"] was not found by Id trying with Name.");
 			focusFrame(How.NAME,frameName,secsToWait);
 			lastFrameFocusedName=frameName;
 		    }
@@ -1257,7 +1259,7 @@ public class WebDriverUtils {
 				focusFrame(How.ID,frameName,secsToWait);
 				lastFrameFocusedName=frameName;
 			    }catch(Exception ex2){
-				getLogger().debug("::focus(frameNamesStructure,secsToWait): The frame [{}] was not found by Id trying with Name.",frameName);
+				debug("focus(frameNamesStructure,secsToWait)","The frame ["+frameName+"] was not found by Id trying with Name.");
 				focusFrame(How.NAME,frameName,secsToWait);
 				lastFrameFocusedName=frameName;
 			    }
@@ -1270,7 +1272,7 @@ public class WebDriverUtils {
 		}
 		if(firstFrame)firstFrame=false;
 	    }
-	    getLogger().debug("::focus(frameNamesStructure,secsToWait): FOCUS switched to :"+lastFrameFocusedName);
+	    debug("focus(frameNamesStructure,secsToWait)","FOCUS switched to :"+lastFrameFocusedName);
 	}catch(Exception ex){
 	    throw new WebSCMSeleniumException("Unable to focus one of the frames of the given structure", ex);
 	}
@@ -1292,12 +1294,12 @@ public class WebDriverUtils {
      *			    default-explicit-wait property) if null. The focus switch seems to take some time ignoring the wait in case it fails to find the frame.
      */
     public void focusFrame(How how,String frameNameOrId,Integer secsToWait){
-	getLogger().trace("::focusFrame(how,frameNameOrId,secsToWait) - Start: changing focus to new frame.");
+	trace("::focusFrame(how,frameNameOrId,secsToWait) - Start","changing focus to new frame.");
 	
 	try{
 	    //validations
 	    if (frameNameOrId == null){
-		getLogger().trace("::focusFrame(how,frameNameOrId,secsToWait) - Finish: No frame provided, the focus was not modified.");
+		trace("::focusFrame(how,frameNameOrId,secsToWait) - Finish","No frame provided, the focus was not modified.");
 		return;
 	    }
 	    if (secsToWait == null) {
@@ -1316,21 +1318,21 @@ public class WebDriverUtils {
 	    try{
 		var wait = (new WebDriverWait(driver, secsToWait));
 		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrId));
-		getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
+		debug("focusFrame(how,frameNameOrId,secsToWait)","FOCUS switched to :"+frameNameOrId);
 	    }catch(Exception ex){
-		getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): Error while waiting for the frame: {}. Error: {}",frameNameOrId,ex.getStackTrace()[0]);
+		debug("focusFrame(how,frameNameOrId,secsToWait)","Error while waiting for the frame: "+frameNameOrId+". Error: "+ex.getStackTrace()[0]);
 		warn("focusFrame(how,frameNameOrId,secsToWait)","Impossible to obtain the frame ["+frameNameOrId+"] by waiting on it, "
 			+ "trying without wait for the element to be pressent, for more information on the warn check the debug logs.");
 		try{
 		    driver.switchTo().frame(driver.findElement(By.xpath("//frame[@"+attribute+"='"+frameNameOrId+"']")));
-		    getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
+		    debug("focusFrame(how,frameNameOrId,secsToWait)","FOCUS switched to :"+frameNameOrId);
 		}catch(Exception ex2){
 		    driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@"+attribute+"='"+frameNameOrId+"']")));  //u.u
-		    getLogger().debug("::focusFrame(how,frameNameOrId,secsToWait): FOCUS switched to :"+frameNameOrId);
+		    debug("focusFrame(how,frameNameOrId,secsToWait)","FOCUS switched to :"+frameNameOrId);
 		}
 	    }
 	    
-	    getLogger().trace("::focusFrame(how,frameNameOrId,secsToWait) - Finish: focus switched.");
+	    trace("::focusFrame(how,frameNameOrId,secsToWait) - Finish","focus switched.");
 	    
 	}catch(Exception ex){
 	    throw new WebSCMSeleniumException("Unable to focus on the given frame", ex);
@@ -1343,13 +1345,13 @@ public class WebDriverUtils {
      * @since 2019-03-02
      */
     public void acceptAlert(){
-	getLogger().trace("::acceptAlert() - Start: Accepting alert.");
+	trace("::acceptAlert() - Start","Accepting alert.");
 	try {
 	    WebDriverWait wait = new WebDriverWait(driver, 2);
 	    Alert alert=wait.until(ExpectedConditions.alertIsPresent());
 	    //Alert alert = driver.switchTo().alert();
 	    alert.accept();
-	    getLogger().trace("::acceptAlert() - Finish: Alert accepted.");
+	    trace("::acceptAlert() - Finish","Alert accepted.");
 	} catch (Exception ex) {
 	    throw new WebSCMSeleniumException("Unable to accept the alert", ex);
 	}
@@ -1365,7 +1367,7 @@ public class WebDriverUtils {
     }
     
     public String takeScreenShot(String screenShotFileName){
-	getLogger().trace("::takeScreenShoot() - Start: Taking a Screenshot.");
+	trace("::takeScreenShoot() - Start","Taking a Screenshot.");
 	try{
 	    if(screenShotFileName==null) screenShotFileName=getDefaultScreenShotFileName();
 	    
@@ -1373,7 +1375,7 @@ public class WebDriverUtils {
 	    File screenShotFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 	    File copy=new File(screenShotFileName);
 	    FileUtils.copyFile(screenShotFile,copy );
-	    getLogger().trace("::takeScreenShoot() - Finish: Screenshot saved.");
+	    trace("::takeScreenShoot() - Finish","Screenshot saved.");
 	    return copy.getAbsolutePath();
 	    
 	}catch(java.io.IOException ex){
