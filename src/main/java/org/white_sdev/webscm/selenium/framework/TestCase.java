@@ -26,12 +26,17 @@ public abstract class TestCase{
 
     public WebDriver initialize(Class<WebDriver> driverClass) throws Exception{
 	disableLogs();
-	WebDriver driver= driverClass.getDeclaredConstructor().newInstance();	
-	String wait=getProperty("implicit-wait");
-	if(wait!=null) driver.manage().timeouts().implicitlyWait(Long.parseLong(wait), TimeUnit.SECONDS);
-	if(Boolean.valueOf(getProperty("maximize-on-open"))) driver.manage().window().maximize();
-	enableLogs();
-	return driver;
+	try{
+	    WebDriver driver= driverClass.getDeclaredConstructor().newInstance();	
+	    String wait=getProperty("implicit-wait");
+	    if(wait!=null) driver.manage().timeouts().implicitlyWait(Long.parseLong(wait), TimeUnit.SECONDS);
+	    if(Boolean.valueOf(getProperty("maximize-on-open"))) driver.manage().window().maximize();
+	    enableLogs();
+	    return driver;
+	}catch(Exception ex){
+	    enableLogs();
+	    throw new RuntimeException("Error initializing the Driver",ex);
+	}
     }
 
     public abstract void test(WebDriver driver) throws Exception;

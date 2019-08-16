@@ -196,6 +196,8 @@ import static org.white_sdev.webscm.selenium.logger.WLogger.warn;
  */
 public class WebDriverUtils {
 
+    //<editor-fold defaultstate="collapsed" desc="Attributes">
+
     /**
      * The default {@link WebDriver driver} of the calling class to manage all interactions.
      *
@@ -222,6 +224,8 @@ public class WebDriverUtils {
     public Boolean defaultContentFocused=true;
     
     public static Integer screenShootCounter=1;
+    
+//</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Methods">
     
@@ -1152,8 +1156,12 @@ public class WebDriverUtils {
 
 	    //I do not understand how to use this yet
 	    //WebElement myDynamicElement = 
+	    if(secs==0){//no wait = normal find.
+		element=driver.findElement(locator);
+	    }else{
+		element= (new WebDriverWait(driver, secs)).until(ExpectedConditions.presenceOfElementLocated(locator));
+	    }
 	    
-	    element= (new WebDriverWait(driver, secs)).until(ExpectedConditions.presenceOfElementLocated(locator));
 	    
 	    trace("::waitFor(locator,secs) - Finish","waiting is over.");
 	    return element;
